@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BGPSK REUNION 2026 - Batch Contacts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #e3f2fd, #f5f5f5 45%, #fdfdfd);
+      color: #222;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 10px 0 16px;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    header .subtitle {
+      margin-top: 4px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #275efe;
+    }
+
+    header h2 {
+      margin-top: 10px;
+      font-size: 1.3rem;
+    }
+
+    .info-marquee {
+      margin-top: 8px;
+      background: #fff7e6;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      border: 1px solid #ffe0a8;
+      color: #8a5a00;
+    }
+
+    .controls-wrapper {
+      margin-top: 14px;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .controls input,
+    .controls select {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid #ddd;
+      font-size: 0.95rem;
+      outline: none;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .controls input:focus,
+    .controls select:focus {
+      border-color: #275efe;
+      box-shadow: 0 0 0 2px rgba(39, 94, 254, 0.15);
+    }
+
+    .batch-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .batch-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .batch-header {
+      padding: 10px 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.98rem;
+    }
+
+    .batch-header span.tag {
+      font-size: 0.74rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .batch-header.orange { background: #e27b11; }
+    .batch-header.green { background: #1e9e52; }
+    .batch-header.blue { background: #275efe; }
+    .batch-header.purple { background: #6a3cb8; }
+    .batch-header.teal { background: #1b9ba5; }
+    .batch-header.red { background: #c73a3a; }
+    .batch-header.pink { background: #c9337d; }
+    .batch-header.brown { background: #795548; }
+    .batch-header.gray { background: #607d8b; }
+
+    .batch-body {
+      padding: 14px 16px 12px;
+    }
+
+    .contact {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 6px;
+    }
+
+    .contact:last-child {
+      border-bottom: none;
+    }
+
+    .contact-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .contact-index {
+      font-weight: 600;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .contact-name {
+      font-weight: 600;
+    }
+
+    .phone-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+    }
+
+    .phone-icon {
+      font-size: 1rem;
+    }
+
+    .phone-number {
+      word-break: break-all;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .phone-number:hover {
+      text-decoration: underline;
+    }
+
+    .contact-right button {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #ededed;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      gap: 6px;
+      transition: background 0.12s ease, transform 0.08s ease;
+    }
+
+    .contact-right button:hover:not(:disabled) {
+      background: #dcdcdc;
+      transform: translateY(-1px);
+    }
+
+    .contact-right button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .copy-icon {
+      font-size: 0.9rem;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    .toast.success { background: #1e9e52; }
+    .toast.error { background: #c73a3a; }
+
+    @media (min-width: 600px) {
+      .controls {
+        flex-direction: row;
+      }
+      .controls input {
+        flex: 2;
+      }
+      .controls select {
+        flex: 1;
+        max-width: 260px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>BGPSK REUNION 2026</h1>
+      <div class="subtitle">BGPSKIAN</div>
+      <h2>Batch Contacts</h2>
+
+      <!-- Marquee -->
+      <marquee class="info-marquee" behavior="scroll" direction="left" scrollamount="4">
+        নম্বর সংশোধন বা অ্যাড করতে চাইলে দয়া করে 01303639407 নম্বরে কল বা হোয়াটসঅ্যাপে যোগাযোগ করুন 📞💬 (ব্যাচ ২২ — কোড ক্রিয়েটর হাসিব) ✨
+      </marquee>
+
+      <div class="controls-wrapper">
+        <div class="controls">
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="নাম বা নম্বর দিয়ে সার্চ করুন..."
+          />
+          <select id="batchFilter">
+            <option value="all">সব ব্যাচ</option>
+            <option value="16">Batch 16</option>
+            <option value="17">Batch 17 (Representator)</option>
+            <option value="18">Batch 18 / 2018</option>
+            <option value="20">Batch 20 / 2020</option>
+            <option value="21">Batch 21 (Representator)</option>
+            <option value="22">Batch 22 (Representator)</option>
+            <option value="23">Batch 23 (Representator)</option>
+            <option value="24">Batch 24</option>
+            <option value="26">Batch 26</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Batch 16 -->
+    <section class="batch-card" data-batch="16">
+      <div class="batch-header orange">
+        <span>BATCH 16</span>
+      </div>
+      <div class="batch-body">
+        <div class="contact" data-name="Dolon" data-number="01303029420">
+          <div class="contact-left">
+            <span class="contact-index">1.</span>
+            <div class="contact-info">
+              <span class="contact-name">Dolon</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01303029420" class="phone-number" id="phone-16-1">01303029420</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-16-1')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Rakib" data-number="01778285102">
+          <div class="contact-left">
+            <span class="contact-index">2.</span>
+            <div class="contact-info">
+              <span class="contact-name">Rakib</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01778285102" class="phone-number" id="phone-16-2">01778285102</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-16-2')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Masum" data-number="01757014636">
+          <div class="contact-left">
+            <span class="contact-index">3.</span>
+            <div class="contact-info">
+              <span class="contact-name">Masum</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01757014636" class="phone-number" id="phone-16-3">01757014636</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-16-3')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Nannu" data-number="01826749139">
+          <div class="contact-left">
+            <span class="contact-index">4.</span>
+            <div class="contact-info">
+              <span class="contact-name">Nannu</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01826749139" class="phone-number" id="phone-16-4">01826749139</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-16-4')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Nahid" data-number="01604623676">
+          <div class="contact-left">
+            <span class="contact-index">5.</span>
+            <div class="contact-info">
+              <span class="contact-name">Nahid</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01604623676" class="phone-number" id="phone-16-5">01604623676</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-16-5')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Shimu" data-number="01318960560">
+          <div class="contact-left">
+            <span class="contact-index">6.</span>
+            <div class="contact-info">
+              <span class="contact-name">Shimu</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01318960560" class="phone-number" id="phone-16-6">01318960560</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-16-6')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Batch 17 -->
+    <section class="batch-card" data-batch="17">
+      <div class="batch-header green">
+        <span>BATCH 17</span>
+        <span class="tag">Representator</span>
+      </div>
+      <div class="batch-body">
+        <div class="contact" data-name="Meraj" data-number="01571235695">
+          <div class="contact-left">
+            <span class="contact-index">1.</span>
+            <div class="contact-info">
+              <span class="contact-name">Meraj</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01571235695" class="phone-number" id="phone-17-1">01571235695</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-17-1')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Atik" data-number="01757429517">
+          <div class="contact-left">
+            <span class="contact-index">2.</span>
+            <div class="contact-info">
+              <span class="contact-name">Atik</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01757429517" class="phone-number" id="phone-17-2">01757429517</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-17-2')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Nahid" data-number="01767103381">
+          <div class="contact-left">
+            <span class="contact-index">3.</span>
+            <div class="contact-info">
+              <span class="contact-name">Nahid</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01767103381" class="phone-number" id="phone-17-3">01767103381</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-17-3')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Rubina" data-number="">
+          <div class="contact-left">
+            <span class="contact-index">4.</span>
+            <div class="contact-info">
+              <span class="contact-name">Rubina</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <span class="phone-number" id="phone-17-4">(number not given)</span>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button disabled>
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Dilruba Disha" data-number="">
+          <div class="contact-left">
+            <span class="contact-index">5.</span>
+            <div class="contact-info">
+              <span class="contact-name">Dilruba Disha</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <span class="phone-number" id="phone-17-5">(number not given)</span>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button disabled>
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Batch 18 -->
+    <section class="batch-card" data-batch="18">
+      <div class="batch-header blue">
+        <span>BATCH 18</span>
+        <span class="tag">2018</span>
+      </div>
+      <div class="batch-body">
+        <div class="contact" data-name="Lisa" data-number="01537111175">
+          <div class="contact-left">
+            <span class="contact-index">1.</span>
+            <div class="contact-info">
+              <span class="contact-name">Lisa</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01537111175" class="phone-number" id="phone-18-1">01537111175</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-18-1')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Abdul Kayum" data-number="01303020354">
+          <div class="contact-left">
+            <span class="contact-index">2.</span>
+            <div class="contact-info">
+              <span class="contact-name">Abdul Kayum</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01303020354" class="phone-number" id="phone-18-2">01303020354</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-18-2')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Saikat" data-number="+8801781074329">
+          <div class="contact-left">
+            <span class="contact-index">3.</span>
+            <div class="contact-info">
+              <span class="contact-name">Saikat</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:+8801781074329" class="phone-number" id="phone-18-3">+8801781074329</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-18-3')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Maruful" data-number="01317131714">
+          <div class="contact-left">
+            <span class="contact-index">4.</span>
+            <div class="contact-info">
+              <span class="contact-name">Maruful</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01317131714" class="phone-number" id="phone-18-4">01317131714</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-18-4')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Kashfiya Nahrin" data-number="01760490888">
+          <div class="contact-left">
+            <span class="contact-index">5.</span>
+            <div class="contact-info">
+              <span class="contact-name">Kashfiya Nahrin</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01760490888" class="phone-number" id="phone-18-5">01760490888</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-18-5')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Durjoy" data-number="+8801571257665">
+          <div class="contact-left">
+            <span class="contact-index">6.</span>
+            <div class="contact-info">
+              <span class="contact-name">Durjoy</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:+8801571257665" class="phone-number" id="phone-18-6">+8801571257665</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-18-6')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Batch 20 -->
+    <section class="batch-card" data-batch="20">
+      <div class="batch-header purple">
+        <span>BATCH 20</span>
+        <span class="tag">2020</span>
+      </div>
+      <div class="batch-body">
+        <div class="contact" data-name="Ayesha Siddika Asha" data-number="01781092169">
+          <div class="contact-left">
+            <span class="contact-index">1.</span>
+            <div class="contact-info">
+              <span class="contact-name">Ayesha Siddika Asha</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01781092169" class="phone-number" id="phone-20-1">01781092169</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-20-1')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Fahim Farhan Labib" data-number="01761387693">
+          <div class="contact-left">
+            <span class="contact-index">2.</span>
+            <div class="contact-info">
+              <span class="contact-name">Fahim Farhan Labib</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01761387693" class="phone-number" id="phone-20-2">01761387693</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-20-2')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Shahriya Jiddi" data-number="01303699734">
+          <div class="contact-left">
+            <span class="contact-index">3.</span>
+            <div class="contact-info">
+              <span class="contact-name">Shahriya Jiddi</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01303699734" class="phone-number" id="phone-20-3">01303699734</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-20-3')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Mohammad Arman" data-number="01580982251">
+          <div class="contact-left">
+            <span class="contact-index">4.</span>
+            <div class="contact-info">
+              <span class="contact-name">Mohammad Arman</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01580982251" class="phone-number" id="phone-20-4">01580982251</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-20-4')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Mostakin Hossain Mehedi" data-number="01768287979">
+          <div class="contact-left">
+            <span class="contact-index">5.</span>
+            <div class="contact-info">
+              <span class="contact-name">Mostakin Hossain Mehedi</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01768287979" class="phone-number" id="phone-20-5">01768287979</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-20-5')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Batch 21 -->
+    <section class="batch-card" data-batch="21">
+      <div class="batch-header teal">
+        <span>BATCH 21</span>
+        <span class="tag">Representator</span>
+      </div>
+      <div class="batch-body">
+        <div class="contact" data-name="Shahed" data-number="01328726682">
+          <div class="contact-left">
+            <span class="contact-index">1.</span>
+            <div class="contact-info">
+              <span class="contact-name">Shahed</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01328726682" class="phone-number" id="phone-21-1">01328726682</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-21-1')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Arman" data-number="01521380068">
+          <div class="contact-left">
+            <span class="contact-index">2.</span>
+            <div class="contact-info">
+              <span class="contact-name">Arman</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01521380068" class="phone-number" id="phone-21-2">01521380068</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-21-2')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Niloy" data-number="01610835801">
+          <div class="contact-left">
+            <span class="contact-index">3.</span>
+            <div class="contact-info">
+              <span class="contact-name">Niloy</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01610835801" class="phone-number" id="phone-21-3">01610835801</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-21-3')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Rifat" data-number="01890651800">
+          <div class="contact-left">
+            <span class="contact-index">4.</span>
+            <div class="contact-info">
+              <span class="contact-name">Rifat</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01890651800" class="phone-number" id="phone-21-4">01890651800</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-21-4')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Shuvo" data-number="01307372957">
+          <div class="contact-left">
+            <span class="contact-index">5.</span>
+            <div class="contact-info">
+              <span class="contact-name">Shuvo</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01307372957" class="phone-number" id="phone-21-5">01307372957</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-21-5')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Batch 22 -->
+    <section class="batch-card" data-batch="22">
+      <div class="batch-header red">
+        <span>BATCH 22</span>
+        <span class="tag">Representator</span>
+      </div>
+      <div class="batch-body">
+        <div class="contact" data-name="Himel" data-number="01328702557">
+          <div class="contact-left">
+            <span class="contact-index">1.</span>
+            <div class="contact-info">
+              <span class="contact-name">Himel</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01328702557" class="phone-number" id="phone-22-1">01328702557</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-22-1')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Hasib" data-number="01303639407">
+          <div class="contact-left">
+            <span class="contact-index">2.</span>
+            <div class="contact-info">
+              <span class="contact-name">Hasib</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01303639407" class="phone-number" id="phone-22-2">01303639407</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-22-2')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Sagor" data-number="01581088293">
+          <div class="contact-left">
+            <span class="contact-index">3.</span>
+            <div class="contact-info">
+              <span class="contact-name">Sagor</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01581088293" class="phone-number" id="phone-22-3">01581088293</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-22-3')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Riyad" data-number="01781188335">
+          <div class="contact-left">
+            <span class="contact-index">4.</span>
+            <div class="contact-info">
+              <span class="contact-name">Riyad</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01781188335" class="phone-number" id="phone-22-4">01781188335</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-22-4')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Sowrov" data-number="01521757381">
+          <div class="contact-left">
+            <span class="contact-index">5.</span>
+            <div class="contact-info">
+              <span class="contact-name">Sowrov</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01521757381" class="phone-number" id="phone-22-5">01521757381</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-22-5')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Batch 23 -->
+    <section class="batch-card" data-batch="23">
+      <div class="batch-header pink">
+        <span>BATCH 23</span>
+        <span class="tag">Representator</span>
+      </div>
+      <div class="batch-body">
+        <div class="contact" data-name="Rimon" data-number="01784051836">
+          <div class="contact-left">
+            <span class="contact-index">1.</span>
+            <div class="contact-info">
+              <span class="contact-name">Rimon</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01784051836" class="phone-number" id="phone-23-1">01784051836</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-23-1')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Ritwik" data-number="01304311140">
+          <div class="contact-left">
+            <span class="contact-index">2.</span>
+            <div class="contact-info">
+              <span class="contact-name">Ritwik</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01304311140" class="phone-number" id="phone-23-2">01304311140</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-23-2')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Faisal" data-number="01317807699">
+          <div class="contact-left">
+            <span class="contact-index">3.</span>
+            <div class="contact-info">
+              <span class="contact-name">Faisal</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01317807699" class="phone-number" id="phone-23-3">01317807699</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-23-3')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Nahid" data-number="01616714143">
+          <div class="contact-left">
+            <span class="contact-index">4.</span>
+            <div class="contact-info">
+              <span class="contact-name">Nahid</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01616714143" class="phone-number" id="phone-23-4">01616714143</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-23-4')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Saikat" data-number="01743199398">
+          <div class="contact-left">
+            <span class="contact-index">5.</span>
+            <div class="contact-info">
+              <span class="contact-name">Saikat</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01743199398" class="phone-number" id="phone-23-5">01743199398</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-23-5')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Batch 24 -->
+    <section class="batch-card" data-batch="24">
+      <div class="batch-header brown">
+        <span>BATCH 24</span>
+      </div>
+      <div class="batch-body">
+        <div class="contact" data-name="Turag" data-number="01614628818">
+          <div class="contact-left">
+            <span class="contact-index">1.</span>
+            <div class="contact-info">
+              <span class="contact-name">Turag</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01614628818" class="phone-number" id="phone-24-1">01614628818</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-24-1')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Jisan" data-number="01328704787">
+          <div class="contact-left">
+            <span class="contact-index">2.</span>
+            <div class="contact-info">
+              <span class="contact-name">Jisan</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01328704787" class="phone-number" id="phone-24-2">01328704787</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-24-2')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Mehedi" data-number="01956042231">
+          <div class="contact-left">
+            <span class="contact-index">3.</span>
+            <div class="contact-info">
+              <span class="contact-name">Mehedi</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01956042231" class="phone-number" id="phone-24-3">01956042231</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-24-3')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Shahriar" data-number="01340295369">
+          <div class="contact-left">
+            <span class="contact-index">4.</span>
+            <div class="contact-info">
+              <span class="contact-name">Shahriar</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01340295369" class="phone-number" id="phone-24-4">01340295369</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-24-4')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Sohag" data-number="01865561479">
+          <div class="contact-left">
+            <span class="contact-index">5.</span>
+            <div class="contact-info">
+              <span class="contact-name">Sohag</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01865561479" class="phone-number" id="phone-24-5">01865561479</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-24-5')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Batch 26 -->
+    <section class="batch-card" data-batch="26">
+      <div class="batch-header gray">
+        <span>BATCH 26</span>
+      </div>
+      <div class="batch-body">
+        <div class="contact" data-name="Yasin" data-number="01773478304">
+          <div class="contact-left">
+            <span class="contact-index">1.</span>
+            <div class="contact-info">
+              <span class="contact-name">Yasin</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01773478304" class="phone-number" id="phone-26-1">01773478304</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-26-1')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Shuvo" data-number="01724390002">
+          <div class="contact-left">
+            <span class="contact-index">2.</span>
+            <div class="contact-info">
+              <span class="contact-name">Shuvo</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01724390002" class="phone-number" id="phone-26-2">01724390002</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-26-2')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Gorbo" data-number="01540059373">
+          <div class="contact-left">
+            <span class="contact-index">3.</span>
+            <div class="contact-info">
+              <span class="contact-name">Gorbo</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01540059373" class="phone-number" id="phone-26-3">01540059373</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-26-3')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Nirob" data-number="01996768639">
+          <div class="contact-left">
+            <span class="contact-index">4.</span>
+            <div class="contact-info">
+              <span class="contact-name">Nirob</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01996768639" class="phone-number" id="phone-26-4">01996768639</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-26-4')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+
+        <div class="contact" data-name="Shuvo" data-number="01784751424">
+          <div class="contact-left">
+            <span class="contact-index">5.</span>
+            <div class="contact-info">
+              <span class="contact-name">Shuvo</span>
+              <div class="phone-line">
+                <span class="phone-icon">📞</span>
+                <a href="tel:01784751424" class="phone-number" id="phone-26-5">01784751424</a>
+              </div>
+            </div>
+          </div>
+          <div class="contact-right">
+            <button onclick="copyNumber('phone-26-5')">
+              <span class="copy-icon">📋</span> Copy
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Toast element -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+    function showToast(message, type) {
+      var toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = "toast " + (type || "success");
+      toast.classList.add("show");
+
+      clearTimeout(showToast._timeout);
+      showToast._timeout = setTimeout(function () {
+        toast.classList.remove("show");
+      }, 1600);
+    }
+
+    function fallbackCopyText(text) {
+      var textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      textarea.style.top = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+
+      try {
+        var success = document.execCommand("copy");
+        if (success) {
+          showToast("Copied: " + text, "success");
+        } else {
+          showToast("কপি হয়নি, আবার চেষ্টা করুন", "error");
+        }
+      } catch (e) {
+        showToast("কপি করা যায়নি", "error");
+      }
+
+      document.body.removeChild(textarea);
+    }
+
+    function copyNumber(id) {
+      var element = document.getElementById(id);
+      if (!element) return;
+
+      var text = element.textContent.trim();
+      if (!text || text === "(number not given)") {
+        showToast("এই নাম্বার দেওয়া হয়নি 😕", "error");
+        return;
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard
+          .writeText(text)
+          .then(function () {
+            showToast("Copied: " + text, "success");
+          })
+          .catch(function () {
+            fallbackCopyText(text);
+          });
+      } else {
+        fallbackCopyText(text);
+      }
+    }
+
+    // Search + batch filter
+    var searchInput = document.getElementById("searchInput");
+    var batchFilter = document.getElementById("batchFilter");
+
+    function applyFilter() {
+      var query = searchInput.value.toLowerCase().trim();
+      var selectedBatch = batchFilter.value;
+      var batchCards = document.querySelectorAll(".batch-card");
+
+      batchCards.forEach(function (card) {
+        var batch = card.getAttribute("data-batch");
+        var contacts = card.querySelectorAll(".contact");
+        var anyVisible = false;
+
+        contacts.forEach(function (c) {
+          var name = c.getAttribute("data-name").toLowerCase();
+          var number = c.getAttribute("data-number").toLowerCase();
+          var matchesQuery =
+            !query || name.includes(query) || number.includes(query);
+          var matchesBatch =
+            selectedBatch === "all" || selectedBatch === batch;
+
+          if (matchesQuery && matchesBatch) {
+            c.style.display = "";
+            anyVisible = true;
+          } else {
+            c.style.display = "none";
+          }
+        });
+
+        card.style.display = anyVisible ? "" : "none";
+      });
+    }
+
+    searchInput.addEventListener("input", applyFilter);
+    batchFilter.addEventListener("change", applyFilter);
+  </script>
+</body>
+</html>
